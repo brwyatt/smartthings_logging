@@ -1,0 +1,1 @@
+git+git://github.com/rllynch/smartthings_cli.git@a955f48
