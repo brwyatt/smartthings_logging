@@ -15,8 +15,8 @@ setup(
     packages=['smartthings_logging'],
     include_package_data=False,
     entry_points={
-        'console_scipts': [
-            'smartthings_log = smartthings_logging.cli:main'
+        'console_scripts': [
+            'smartthings_logger = smartthings_logging.cli:main'
         ],
     },
     install_requires=[
