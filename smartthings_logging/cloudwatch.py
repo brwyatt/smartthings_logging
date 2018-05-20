@@ -56,3 +56,25 @@ def sendLogs(data):
             request['sequenceToken'] = sequenceToken
 
         logs.put_log_events(**request)
+
+    # Create MetricFilters if needed
+    filters = [x['filterName'] for x in logs.describe_metric_filters(
+        logGroupName=logGroupName
+    )['metricFilters']]
+    for device_name in data:
+        for device_type in data[device_name]:
+            filterName = '{0} - {1}'.format(device_name, device_type)
+            if filterName not in filters:
+                logs.put_metric_filter(
+                    logGroupName=logGroupName,
+                    filterName=filterName,
+                    filterPattern='{{$.name = "{0}" && $.type = "{1}" && '
+                    '$.value = *}}'.format(device_name, device_type),
+                    metricTransformations=[
+                        {
+                            'metricName': filterName,
+                            'metricNamespace': logGroupName,
+                            'metricValue': '$.value'
+                        }
+                    ]
+                )
