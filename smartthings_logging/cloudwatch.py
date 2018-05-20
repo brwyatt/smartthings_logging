@@ -6,15 +6,7 @@ logGroupName = 'SmartThings'
 regionName = 'us-west-2'
 
 
-def sendLogs(logStreamName, data):
-    now = int(time() * 1000)
-
-    # Create the logEvents list to send
-    logEvents = [{
-        'timestamp': now,
-        'message': '{{ "name": "{0}", "value": {1} }}'.format(
-            x, data[x]['state'])
-    } for x in data]
+def sendLogs(data):
 
     logs = boto3.client('logs', region_name=regionName)
 
@@ -25,32 +17,42 @@ def sendLogs(logStreamName, data):
     if logGroupName not in [x['logGroupName'] for x in logGroups]:
         logs.create_log_group(logGroupName=logGroupName)
 
-    # Check if LogStream exists, create if needed
-    logStreams = logs.describe_log_streams(
-        logGroupName=logGroupName,
-        logStreamNamePrefix=logStreamName
-    )['logStreams']
+    t = int(time() * 1000)
 
-    if logStreamName not in [x['logStreamName'] for x in logStreams]:
-        logs.create_log_stream(
+    for logStreamName in data:
+        # Create the logEvents list to send
+        logEvents = [{
+            'timestamp': t,
+            'message': '{{ "name": "{0}", "type": "{1}", "value": {2} }}'
+            .format(logStreamName, x, data[logStreamName][x]['value'])
+        } for x in data[logStreamName]]
+
+        # Check if LogStream exists, create if needed
+        logStreams = logs.describe_log_streams(
             logGroupName=logGroupName,
-            logStreamName=logStreamName
-        )
-        sequenceToken = None
-    else:
-        # Set LogStream's SequenceToken
-        sequenceToken = [x for x in logStreams
-                         if x['logStreamName'] == logStreamName][0].get(
-                             'uploadSequenceToken', None)
+            logStreamNamePrefix=logStreamName
+        )['logStreams']
 
-    # Send the logs to CloudWatch
-    request = {
-        'logGroupName': logGroupName,
-        'logStreamName': logStreamName,
-        'logEvents': logEvents
-    }
+        if logStreamName not in [x['logStreamName'] for x in logStreams]:
+            logs.create_log_stream(
+                logGroupName=logGroupName,
+                logStreamName=logStreamName
+            )
+            sequenceToken = None
+        else:
+            # Set LogStream's SequenceToken
+            sequenceToken = [x for x in logStreams
+                             if x['logStreamName'] == logStreamName][0].get(
+                                 'uploadSequenceToken', None)
 
-    if sequenceToken:
-        request['sequenceToken'] = sequenceToken
+        # Send the logs to CloudWatch
+        request = {
+            'logGroupName': logGroupName,
+            'logStreamName': logStreamName,
+            'logEvents': logEvents
+        }
 
-    logs.put_log_events(**request)
+        if sequenceToken:
+            request['sequenceToken'] = sequenceToken
+
+        logs.put_log_events(**request)
