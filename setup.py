@@ -21,6 +21,7 @@ setup(
     },
     install_requires=[
         'smartthings_cli',
-        'boto3'
+        'boto3',
+        'pycrypto'
     ]
 )
