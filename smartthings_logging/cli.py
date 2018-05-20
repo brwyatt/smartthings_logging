@@ -1,7 +1,8 @@
-import json
 import sys
 
 from smartthings_cli import smartthings_cli
+
+from smartthings_logging.cloudwatch import sendLogs
 
 
 def main(args=None):
@@ -14,10 +15,12 @@ def main(args=None):
     endpoint_base_url, endpoint_url = smartthings_cli.get_endpoint_url(
         access_token)
 
-    result = smartthings_cli.get_status(access_token, endpoint_base_url,
-                                        endpoint_url, 'temperature')
+    device_type = 'temperature'
 
-    print(json.dumps(result, sort_keys=True, indent=4))
+    results = smartthings_cli.get_status(access_token, endpoint_base_url,
+                                         endpoint_url, device_type)
+
+    sendLogs(device_type, results)
 
 
 if __name__ == '__main__':
