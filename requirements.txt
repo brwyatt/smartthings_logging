@@ -1,1 +1,2 @@
 git+git://github.com/rllynch/smartthings_cli.git@a955f48
+boto3==1.7.24
