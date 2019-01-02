@@ -10,7 +10,8 @@ def main(args=None):
 
     aggregate_data = {}
 
-    for device_type in ['temperature', 'humidity', 'battery']:
+    for device_type in ['temperature', 'humidity', 'battery', 'power', 'energy',
+                        'voltage']:
         data = getData(device_type)
         for device_name in data:
             if device_name not in aggregate_data:
