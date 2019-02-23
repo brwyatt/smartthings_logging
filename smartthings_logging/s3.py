@@ -1,5 +1,6 @@
 import boto3
-from Crypto.Cipher import AES
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.backends import default_backend
 
 import smartthings_logging.kms as kms
 
@@ -26,9 +27,11 @@ def getConfig(bucket, filename):
         Key=filename
     )['Body'].read()
 
-    aes = AES.new(key)
-
-    return str(remove_padding(aes.decrypt(ciphertext)), 'utf-8')
+    backend = default_backend()
+    cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=backend)
+    decryptor = cipher.decryptor()
+    return str(remove_padding(
+        decryptor.update(ciphertext) + decryptor.finalize()), 'utf-8')
 
 
 def pad(plaintext, blocksize=16):
