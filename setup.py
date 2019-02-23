@@ -1,6 +1,6 @@
 #!/user/bin/env python
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='smartthings_logging',
@@ -12,7 +12,8 @@ setup(
     license='GPLv3',
     keywords='automation aws cli cloudwatch smartthings',
     url='https://github.com/brwyatt/smartthings_logging',
-    packages=['smartthings_logging'],
+    packages=find_packages(where='src'),
+    package_dir={'': 'src'},
     include_package_data=False,
     entry_points={
         'console_scripts': [
