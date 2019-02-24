@@ -66,7 +66,7 @@ echo "Adding dependency modules..."
 cd "${dir}"
 mkdir -p "${dependencies_dir}"
 rm -rf "${dependencies_dir}"/*
-grep -ive '^boto3[=<>]' requirements.txt | pip3 install -r /dev/stdin --target "${dependencies_dir}"
+grep -ivEe '^boto(3|core)[=<>]' requirements.txt | pip3 install -r /dev/stdin --target "${dependencies_dir}"
 cd "${dependencies_dir}"
 zip -r "${lambda_complete_zip}" * -i "*.py" "*.so"
 cd "${lib_tmp_path}"
