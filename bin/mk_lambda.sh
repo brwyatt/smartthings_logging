@@ -11,7 +11,7 @@ lambda_complete_zip="${build_dir}/lambda_function_complete.zip"
 lambda_function_zip="${build_dir}/lambda_function_all.zip"
 lambda_layer_zip="${build_dir}/lambda_layer_all.zip"
 
-file_patterns=("*.py" "*.so" "*.pem")
+file_patterns=("*.py" "*.so" "*.so.*" "*.pem")
 
 function filter_dirs() {
     cat \
