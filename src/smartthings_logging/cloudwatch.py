@@ -9,6 +9,7 @@ log = logging.getLogger(__name__)
 
 logGroupName = os.environ.get('LogGroup', 'SmartThings')
 regionName = os.environ.get('Region', 'us-west-2')
+metricNamespace = os.environ.get('MetricNamespace', 'SmartThings')
 
 
 def sendLogs(data):
@@ -76,7 +77,7 @@ def sendLogs(data):
                     metricTransformations=[
                         {
                             'metricName': filterName,
-                            'metricNamespace': logGroupName,
+                            'metricNamespace': metricNamespace,
                             'metricValue': '$.value'
                         }
                     ]

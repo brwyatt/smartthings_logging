@@ -12,12 +12,15 @@ Parameters:
     Type: String
     Default: 'SmartThingsConfig'
     Description: 'Name of the Config secret in AWS Secrets Manager'
+  SmartThingsMetricNamespace:
+    Type: String
+    Default: 'SmartThings'
+    Description: 'Metric Namespace for Metric Filters'
 
 Resources:
   SmartThingsLoggingLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
-      LayerName: 'SmartThings_Logging'
       Description: Code for SmartThings_Logging and dependencies
       ContentUri: build/
       RetentionPolicy: Delete
@@ -27,7 +30,6 @@ Resources:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
     Properties:
-      LogGroupName: 'SmartThings'
       RetentionInDays: 731 # 2 Years
   SmartThingsLambdaLogGroup:
     # Basically want to set expiration of logs for the Lambda function
@@ -89,7 +91,6 @@ Resources:
   SmartThingsLogger:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: 'SmartThings_Logger'
       Handler: smartthings_logger.run
       CodeUri: lambda/smartthings_logger.py
       Role: !GetAtt SmartThingsLoggerRole.Arn
@@ -99,6 +100,7 @@ Resources:
           LOGLEVEL: INFO
           Region: !Sub ${AWS::Region}
           LogGroup: !Sub ${SmartThingsLogGroup}
+          MetricNamespace: !Sub ${SmartThingsMetricNamespace}
           SmartThingsConfigSecretName: !Sub ${SmartThingsConfigSecretName}
       Events:
         SmartThingsLoggerSchedule:
