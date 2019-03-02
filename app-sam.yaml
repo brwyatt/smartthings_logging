@@ -17,15 +17,16 @@ Resources:
   SmartThingsLoggingLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
-      # LayerName: 'SmartThings_Logging'
+      LayerName: 'SmartThings_Logging'
       Description: Code for SmartThings_Logging and dependencies
       ContentUri: build/
-      RetentionPolicy: Retain
+      RetentionPolicy: Delete
       CompatibleRuntimes:
         - python3.6
   SmartThingsLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
+      LogGroupName: 'SmartThings'
       RetentionInDays: 731 # 2 Years
   SmartThingsLoggerRole:
     Type: AWS::IAM::Role
@@ -81,14 +82,14 @@ Resources:
   SmartThingsLogger:
     Type: AWS::Serverless::Function
     Properties:
-      # Name: 'SmartThings_Logger'
+      Name: 'SmartThings_Logger'
       Handler: smartthings_logger.run
       CodeUri: lambda/smartthings_logger.py
       Role: !GetAtt SmartThingsLoggerRole.Arn
       Timeout: 30
       Environment:
         Variables:
-          LOGLEVEL: DEBUG
+          LOGLEVEL: INFO
           Region: !Sub ${AWS::Region}
           LogGroup: !Sub ${SmartThingsLogGroup}
           SmartThingsConfigSecretName: !Sub ${SmartThingsConfigSecretName}

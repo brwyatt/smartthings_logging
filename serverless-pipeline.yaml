@@ -20,6 +20,10 @@ Parameters:
     NoEcho: true
     Type: String
     Description: "Secret. OAuthToken with access to Repo. Long string of characters and digits. Go to https://github.com/settings/tokens"
+  SmartThingsConfigSecretName:
+    Type: String
+    Default: 'SmartThingsConfig'
+    Description: 'Name of the Config secret in AWS Secrets Manager'
 Resources:
   # CodeBuild project and resources (S3 Bucket for build artifacts, Role, Project)
   BuildArtifactsBucket:
@@ -204,7 +208,7 @@ Resources:
                 ChangeSetName: !Sub '${ServiceName}-Stack-ChangeSet'
                 TemplatePath: BuiltZip::app-output_sam.yaml
                 Capabilities: CAPABILITY_IAM
-                ParameterOverrides: '{}'
+                ParameterOverrides: !Sub '{ "SmartThingsConfigSecretName": "${SmartThingsConfigSecretName}" }'
               InputArtifacts:
                 - Name: BuiltZip
               RunOrder: 2
