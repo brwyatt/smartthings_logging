@@ -65,7 +65,7 @@ Resources:
     Properties:
       Handler: smartthings_logger.run
       CodeUri: lambda/smartthings_logger.py
-      Role: !Ref SmartThingsLoggerRole
+      Role: !GetAtt SmartThingsLoggerRole.Arn
       Events:
         SmartThingsLoggerSchedule:
           Type: Schedule
