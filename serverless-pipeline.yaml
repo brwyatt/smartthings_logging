@@ -4,6 +4,18 @@ Parameters:
     Type: String
     Default: SmartThingsLogger
     Description: Name of the service - Used in all resources
+  GitHubUser:
+    Type: String
+    Description: GitHub UserName. This username must have access to the GitHubToken
+    Default: brwyatt
+  GitHubRepoName:
+    Type: String
+    Description: The GitHub repo name
+    Default: smartthings_logging
+  GitHubRepoBranch:
+    Type: String
+    Description: The GitHub repo branch code pipelines should watch for changes on
+    Default: master
   GitHubToken:
     NoEcho: true
     Type: String
@@ -149,10 +161,10 @@ Resources:
                         Provider: GitHub
                         Version: 1
                       Configuration:
+                        Owner: !Ref GitHubUser
+                        Repo: !Ref GitHubRepoName
+                        Branch: !Ref GitHubRepoBranch
                         OAuthToken: !Ref GitHubToken
-                        Owner: brwyatt
-                        Repo: smartthings_logging
-                        Branch: SAM
                       OutputArtifacts:
                         - Name: SourceZip
                       RunOrder: 1
