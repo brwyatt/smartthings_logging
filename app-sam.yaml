@@ -63,11 +63,12 @@ Resources:
                   - 'logs:DescribeLogGroups'
                   - 'logs:DescribeLogStreams'
                   - 'logs:DescribeMetricFilters'
+                  - 'logs:PutLogEvents'
                   - 'logs:PutMetricFilter'
                 Resource:
                   - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SmartThingsLogGroup}'
                   - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SmartThingsLogGroup}:*'
-                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SmartThingsLogGroup}:*:*'
+                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SmartThingsLogGroup}:log-stream:*'
         - PolicyName: 'SmartThings-ConfigSecret'
           PolicyDocument:
             Version: '2012-10-17'
