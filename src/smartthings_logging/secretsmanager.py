@@ -26,7 +26,7 @@ cached_config = {
 def getSmartThingsConfig(force=False):
     log.info('Fetching SmartThings config from Secrets Manager')
 
-    if cached_config['time'] > (time() - cacheTimeout) and not force:
+    if cached_config['time'] > time() and not force:
         log.debug('Cached config still valid, using cache!')
         return cached_config['value']
 
@@ -46,6 +46,6 @@ def getSmartThingsConfig(force=False):
     else:
         log.debug('Fetch complete!')
         cached_config['value'] = secret
-        cached_config['time'] = time() + randint(
+        cached_config['time'] = time() + cacheTimeout + randint(
             0-cacheTimeoutJitter, cacheTimeoutJitter)  # Apply some randomness
         return secret
