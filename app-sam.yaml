@@ -85,10 +85,11 @@ Resources:
       CodeUri: lambda/smartthings_logger.py
       Role: !GetAtt SmartThingsLoggerRole.Arn
       Environment:
-        LOGLEVEL: DEBUG
-        Region: !Sub ${AWS::Region}
-        LogGroup: !Sub ${SmartThingsLogGroup}
-        SmartThingsConfigSecretName: !Sub ${SmartThingsConfigSecretName}
+        Variables:
+          LOGLEVEL: DEBUG
+          Region: !Sub ${AWS::Region}
+          LogGroup: !Sub ${SmartThingsLogGroup}
+          SmartThingsConfigSecretName: !Sub ${SmartThingsConfigSecretName}
       Events:
         SmartThingsLoggerSchedule:
           Type: Schedule
