@@ -147,7 +147,7 @@ Resources:
                       Configuration:
                         Owner: brwyatt
                         Repo: smartthings_logging
-                        BranchName: SAM
+                        Branch: SAM
                       OutputArtifacts:
                         - Name: SourceZip
                       RunOrder: 1
