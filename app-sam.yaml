@@ -25,6 +25,7 @@ Resources:
         - python3.6
   SmartThingsLogGroup:
     Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
     Properties:
       LogGroupName: 'SmartThings'
       RetentionInDays: 731 # 2 Years
