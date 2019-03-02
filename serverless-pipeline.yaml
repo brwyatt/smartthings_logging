@@ -1,9 +1,9 @@
 AWSTemplateFormatVersion: 2010-09-09
 Parameters:
-    ServiceName:
-        Type: String
-        Default: SmartThingsLogger
-        Description: Name of the service - Used in all resources
+  ServiceName:
+    Type: String
+    Default: SmartThingsLogger
+    Description: Name of the service - Used in all resources
 Resources:
     # CodeBuild project and resources (S3 Bucket for build artifacts, Role, Project)
     BuildArtifactsBucket:
