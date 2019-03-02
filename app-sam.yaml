@@ -7,11 +7,17 @@ Globals:
     Layers:
       - !Ref SmartThingsLoggingLayer
 
+Parameters:
+  SmartThingsConfigSecretName:
+    Type: String
+    Default: 'SmartThingsConfig'
+    Description: 'Name of the Config secret in AWS Secrets Manager'
+
 Resources:
   SmartThingsLoggingLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
-      LayerName: 'SmartThings_Logging'
+      # LayerName: 'SmartThings_Logging'
       Description: Code for SmartThings_Logging and dependencies
       ContentUri: build/
       RetentionPolicy: Retain
@@ -44,7 +50,9 @@ Resources:
                   - 'logs:CreateLogStream'
                   - 'logs:PutLogEvents'
                 Resource:
-                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*'
+                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${SmartThingsLogger}'
+                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${SmartThingsLogger}:*'
+                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${SmartThingsLogger}:*:*'
         - PolicyName: 'SmartThings-LogAccess'
           PolicyDocument:
             Version: '2012-10-17'
@@ -60,9 +68,19 @@ Resources:
                   - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SmartThingsLogGroup}'
                   - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SmartThingsLogGroup}:*'
                   - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SmartThingsLogGroup}:*:*'
+        - PolicyName: 'SmartThings-ConfigSecret'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 'secretsmanager:GetSecretValue'
+                Resource:
+                  - !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SmartThingsConfigSecretName}-*'
   SmartThingsLogger:
     Type: AWS::Serverless::Function
     Properties:
+      # Name: 'SmartThings_Logger'
       Handler: smartthings_logger.run
       CodeUri: lambda/smartthings_logger.py
       Role: !GetAtt SmartThingsLoggerRole.Arn
@@ -70,7 +88,7 @@ Resources:
         LOGLEVEL: DEBUG
         Region: !Sub ${AWS::Region}
         LogGroup: !Sub ${SmartThingsLogGroup}
-        SmartThingsConfigSecretName: 'SmartThingsConfig'
+        SmartThingsConfigSecretName: !Sub ${SmartThingsConfigSecretName}
       Events:
         SmartThingsLoggerSchedule:
           Type: Schedule

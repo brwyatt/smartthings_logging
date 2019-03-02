@@ -6,4 +6,6 @@ log = setup_logging()
 
 
 def run(event, context):
+    log.info('Starting SmartThings logger')
     collect_and_log()
+    log.info('SmartThings logger completed!')
