@@ -28,6 +28,12 @@ Resources:
     Properties:
       LogGroupName: 'SmartThings'
       RetentionInDays: 731 # 2 Years
+  SmartThingsLambdaLogGroup:
+    # Basically want to set expiration of logs for the Lambda function
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${SmartThingsLogger}'
+      RetentionInDays: 7 # 1 week
   SmartThingsLoggerRole:
     Type: AWS::IAM::Role
     Properties:

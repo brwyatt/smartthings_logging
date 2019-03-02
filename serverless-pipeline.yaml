@@ -28,6 +28,12 @@ Resources:
   # CodeBuild project and resources (S3 Bucket for build artifacts, Role, Project)
   BuildArtifactsBucket:
     Type: AWS::S3::Bucket
+  CodeBuildLogGroup:
+    # Basically want to set expiration of logs for the Lambda function
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/codebuild/${CodeBuildProject}'
+      RetentionInDays: 14 # 2 weeks
   CodeBuildServiceRole:
     Type: AWS::IAM::Role
     Properties:
@@ -204,8 +210,8 @@ Resources:
               Configuration:
                 ActionMode: CHANGE_SET_REPLACE
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
-                StackName: !Sub '${ServiceName}-Stack'
-                ChangeSetName: !Sub '${ServiceName}-Stack-ChangeSet'
+                StackName: !Sub '${ServiceName}-Application'
+                ChangeSetName: !Sub '${ServiceName}-Application-ChangeSet'
                 TemplatePath: BuiltZip::app-output_sam.yaml
                 Capabilities: CAPABILITY_IAM
                 ParameterOverrides: !Sub '{ "SmartThingsConfigSecretName": "${SmartThingsConfigSecretName}" }'
@@ -221,10 +227,10 @@ Resources:
               Configuration:
                 ActionMode: CHANGE_SET_EXECUTE
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
-                StackName: !Sub '${ServiceName}-Stack'
-                ChangeSetName: !Sub '${ServiceName}-Stack-ChangeSet'
+                StackName: !Sub '${ServiceName}-Application'
+                ChangeSetName: !Sub '${ServiceName}-Application-ChangeSet'
               OutputArtifacts:
-                - Name: !Sub '${ServiceName}StackChangeSet'
+                - Name: !Sub '${ServiceName}ApplicationChangeSet'
               RunOrder: 3
 
 # vim: ts=2 sts=2 sw=2 expandtab
