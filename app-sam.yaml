@@ -94,6 +94,6 @@ Resources:
         SmartThingsLoggerSchedule:
           Type: Schedule
           Properties:
-            Schedule: rate(1 minutes)
+            Schedule: 'rate(1 minute)'
 
 # vim: ts=2 sts=2 sw=2 expandtab
