@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Runtime: python3.6
+    Layers:
+      - !Ref SmartThingsLoggingLayer
+
+Resources:
+  SmartThingsLoggingLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: 'SmartThings_Logging'
+      Description: Code for SmartThings_Logging and dependencies
+      ContentUri: build/
+      RetentionPolicy: Retain
+      CompatibleRuntimes:
+        - python3.6
+  SmartThingsLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 731
+  SmartThingsLoggerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: 'Lambda-CloudWatch-Publish'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 'logs:CreateLogGroup',
+                  - 'logs:CreateLogStream',
+                  - 'logs:PutLogEvents',
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::Account}:*'
+        - PolicyName: 'SmartThings-LogAccess'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 'logs:CreateLogStream'
+                  - 'logs:DescribeLogGroups',
+                  - 'logs:DescribeLogStreams',
+                  - 'logs:DescribeMetricFilters',
+                  - 'logs:PutMetricFilter'
+                Resource:
+                  - !Sub '${SmartThingsLogGroup}'
+                  - !Sub '${SmartThingsLogGroup}:*:*'
+  SmartThingsLogger:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: smartthings_logger.run
+      CodeUri: lambda/smartthings_logger.py
+      Role: !Ref SmartThingsLoggerRole
+      Events:
+        SmartThingsLoggerSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: rate(2 minutes)
+
+# vim: ts=2 sts=2 sw=2 expandtab
