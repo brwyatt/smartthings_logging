@@ -10,5 +10,5 @@ Python module to log SmartThings data to CloudWatch
 
 ## Deploy
 1) Create the stack from `serverless-pipeline.yaml` or the botton below, and substitute your GitHub username and Token (and `SmartThingsConfigSecretName` if you used a different name).
-   [![Launch SmartThings Logger](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/create/review?filter=active&templateURL=https://raw.githubusercontent.com/brwyatt/smartthings_logging/master/serverless-pipeline.yaml&stackName=SmartThingsLogger-Pipeline)
+   [![Launch SmartThings Logger](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/create/review?filter=active&templateURL=https://s3-us-west-2.amazonaws.com/brwyatt-public-files/CF-Stacks/SmartThingsLogging/serverless-pipeline.yaml&stackName=SmartThingsLogger-Pipeline)
 1) Allow the Source and Build steps to complete, then approve the Deploy phase.
