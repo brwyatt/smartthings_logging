@@ -15,15 +15,6 @@ def sendLogs(data):
     log.info('Logging SmartThings data to CloudWatch')
     cwlogs = boto3.client('logs', region_name=regionName)
 
-    # Check if LogGroup exists, create if needed
-    logGroups = cwlogs.describe_log_groups(
-        logGroupNamePrefix=logGroupName)['logGroups']
-
-    if logGroupName not in [x['logGroupName'] for x in logGroups]:
-        log.debug('LogGroup "{}" does not exist, creating!'
-                  .format(logGroupName))
-        cwlogs.create_log_group(logGroupName=logGroupName)
-
     t = int(time() * 1000)
 
     for logStreamName in data:
