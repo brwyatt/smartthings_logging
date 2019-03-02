@@ -20,19 +20,19 @@ Resources:
   SmartThingsLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      RetentionInDays: 731
+      RetentionInDays: 731 # 2 Years
   SmartThingsLoggerRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
-          - Effect: "Allow"
+          - Effect: 'Allow'
             Principal:
               Service:
-                - "lambda.amazonaws.com"
+                - 'lambda.amazonaws.com'
             Action:
-              - "sts:AssumeRole"
+              - 'sts:AssumeRole'
       Policies:
         - PolicyName: 'Lambda-CloudWatch-Publish'
           PolicyDocument:
