@@ -1,9 +1,10 @@
+import os
 from time import time
 
 import boto3
 
-logGroupName = 'SmartThings'
-regionName = 'us-west-2'
+logGroupName = os.environ.get('LogGroup', 'SmartThings')
+regionName = os.environ.get('Region', 'us-west-2')
 
 
 def sendLogs(data):

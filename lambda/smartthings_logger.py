@@ -1,4 +1,9 @@
-from smartthings_logging.cli import main
+from smartthings_logging.logging import setup_logging
+from smartthings_logging import collect_and_log
 
-def run(*args, **kwargs):
-    main()
+
+log = setup_logging()
+
+
+def run(event, context):
+    collect_and_log()

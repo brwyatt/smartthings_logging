@@ -66,10 +66,15 @@ Resources:
       Handler: smartthings_logger.run
       CodeUri: lambda/smartthings_logger.py
       Role: !GetAtt SmartThingsLoggerRole.Arn
+      Environment:
+        LOGLEVEL: DEBUG
+        Region: !Sub ${AWS::Region}
+        LogGroup: !Sub ${SmartThingsLogGroup}
+        SmartThingsConfigSecretName: 'SmartThingsConfig'
       Events:
         SmartThingsLoggerSchedule:
           Type: Schedule
           Properties:
-            Schedule: rate(2 minutes)
+            Schedule: rate(1 minutes)
 
 # vim: ts=2 sts=2 sw=2 expandtab
