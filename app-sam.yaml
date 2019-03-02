@@ -40,9 +40,9 @@ Resources:
             Statement:
               - Effect: 'Allow'
                 Action:
-                  - 'logs:CreateLogGroup',
-                  - 'logs:CreateLogStream',
-                  - 'logs:PutLogEvents',
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
                 Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::Account}:*'
         - PolicyName: 'SmartThings-LogAccess'
           PolicyDocument:
@@ -51,9 +51,9 @@ Resources:
               - Effect: 'Allow'
                 Action:
                   - 'logs:CreateLogStream'
-                  - 'logs:DescribeLogGroups',
-                  - 'logs:DescribeLogStreams',
-                  - 'logs:DescribeMetricFilters',
+                  - 'logs:DescribeLogGroups'
+                  - 'logs:DescribeLogStreams'
+                  - 'logs:DescribeMetricFilters'
                   - 'logs:PutMetricFilter'
                 Resource:
                   - !Sub '${SmartThingsLogGroup}'
