@@ -57,8 +57,9 @@ Resources:
                   - 'logs:DescribeMetricFilters'
                   - 'logs:PutMetricFilter'
                 Resource:
-                  - !Sub '${SmartThingsLogGroup}'
-                  - !Sub '${SmartThingsLogGroup}:*:*'
+                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SmartThingsLogGroup}'
+                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SmartThingsLogGroup}:*'
+                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SmartThingsLogGroup}:*:*'
   SmartThingsLogger:
     Type: AWS::Serverless::Function
     Properties:
