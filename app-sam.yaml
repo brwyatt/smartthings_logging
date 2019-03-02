@@ -89,7 +89,7 @@ Resources:
   SmartThingsLogger:
     Type: AWS::Serverless::Function
     Properties:
-      Name: 'SmartThings_Logger'
+      FunctionName: 'SmartThings_Logger'
       Handler: smartthings_logger.run
       CodeUri: lambda/smartthings_logger.py
       Role: !GetAtt SmartThingsLoggerRole.Arn
