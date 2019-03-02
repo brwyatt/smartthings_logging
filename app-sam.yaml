@@ -1,0 +1,111 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Runtime: python3.6
+    Layers:
+      - !Ref SmartThingsLoggingLayer
+
+Parameters:
+  SmartThingsConfigSecretName:
+    Type: String
+    Default: 'SmartThingsConfig'
+    Description: 'Name of the Config secret in AWS Secrets Manager'
+  SmartThingsMetricNamespace:
+    Type: String
+    Default: 'SmartThings'
+    Description: 'Metric Namespace for Metric Filters'
+
+Resources:
+  SmartThingsLoggingLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      Description: Code for SmartThings_Logging and dependencies
+      ContentUri: build/
+      RetentionPolicy: Delete
+      CompatibleRuntimes:
+        - python3.6
+  SmartThingsLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    Properties:
+      RetentionInDays: 731 # 2 Years
+  SmartThingsLambdaLogGroup:
+    # Basically want to set expiration of logs for the Lambda function
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${SmartThingsLogger}'
+      RetentionInDays: 7 # 1 week
+  SmartThingsLoggerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service:
+                - 'lambda.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: 'Lambda-CloudWatch-Publish'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Resource:
+                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*'
+                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*'
+                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*:*'
+        - PolicyName: 'SmartThings-LogAccess'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 'logs:CreateLogStream'
+                  - 'logs:DescribeLogGroups'
+                  - 'logs:DescribeLogStreams'
+                  - 'logs:DescribeMetricFilters'
+                  - 'logs:PutLogEvents'
+                  - 'logs:PutMetricFilter'
+                Resource:
+                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SmartThingsLogGroup}'
+                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SmartThingsLogGroup}:*'
+                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SmartThingsLogGroup}:log-stream:*'
+        - PolicyName: 'SmartThings-ConfigSecret'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 'secretsmanager:GetSecretValue'
+                Resource:
+                  - !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SmartThingsConfigSecretName}-*'
+  SmartThingsLogger:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: smartthings_logger.run
+      CodeUri: lambda/smartthings_logger.py
+      Role: !GetAtt SmartThingsLoggerRole.Arn
+      Timeout: 30
+      Environment:
+        Variables:
+          LOGLEVEL: INFO
+          Region: !Sub ${AWS::Region}
+          LogGroup: !Sub ${SmartThingsLogGroup}
+          MetricNamespace: !Sub ${SmartThingsMetricNamespace}
+          SmartThingsConfigSecretName: !Sub ${SmartThingsConfigSecretName}
+      Events:
+        SmartThingsLoggerSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: 'rate(1 minute)'
+
+# vim: ts=2 sts=2 sw=2 expandtab
