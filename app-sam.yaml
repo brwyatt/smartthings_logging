@@ -12,6 +12,10 @@ Parameters:
     Type: String
     Default: 'SmartThingsConfig'
     Description: 'Name of the Config secret in AWS Secrets Manager'
+  SmartThingsExecutionRate:
+    Type: String
+    Default: 'rate(2 minutes)'
+    Description: 'Rate expression for executing the Lambda function'
   SmartThingsMetricNamespace:
     Type: String
     Default: 'SmartThings'
@@ -106,6 +110,6 @@ Resources:
         SmartThingsLoggerSchedule:
           Type: Schedule
           Properties:
-            Schedule: 'rate(1 minute)'
+            Schedule: !Ref SmartThingsExecutionRate
 
 # vim: ts=2 sts=2 sw=2 expandtab

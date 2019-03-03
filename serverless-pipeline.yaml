@@ -24,6 +24,10 @@ Parameters:
     Type: String
     Default: 'SmartThingsConfig'
     Description: 'Name of the Config secret in AWS Secrets Manager'
+  SmartThingsExecutionRate:
+    Type: String
+    Default: 'rate(2 minutes)'
+    Description: 'Rate expression for executing the Lambda function'
   SmartThingsMetricNamespace:
     Type: String
     Default: 'SmartThings'
@@ -211,7 +215,12 @@ Resources:
                 ChangeSetName: !Sub '${ServiceName}-Application-ChangeSet'
                 TemplatePath: BuiltZip::app-output_sam.yaml
                 Capabilities: CAPABILITY_IAM
-                ParameterOverrides: !Sub '{ "SmartThingsConfigSecretName": "${SmartThingsConfigSecretName}", "SmartThingsMetricNamespace": "${SmartThingsMetricNamespace}" }'
+                ParameterOverrides: !Sub |
+                  {
+                    "SmartThingsConfigSecretName": "${SmartThingsConfigSecretName}",
+                    "SmartThingsMetricNamespace": "${SmartThingsMetricNamespace}",
+                    "SmartThingsExecutionRate": "${SmartThingsExecutionRate}"
+                  }
               InputArtifacts:
                 - Name: BuiltZip
               RunOrder: 1
