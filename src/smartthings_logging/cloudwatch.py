@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 import os
 from time import time
@@ -13,7 +14,7 @@ metricNamespace = os.environ.get('MetricNamespace', 'SmartThings')
 
 
 def sendLogs(data):
-    log.info('Logging SmartThings data to CloudWatch')
+    log.info('Logging SmartThings data to CloudWatch Logs')
     cwlogs = boto3.client('logs', region_name=regionName)
 
     t = int(time() * 1000)
@@ -82,3 +83,34 @@ def sendLogs(data):
                         }
                     ]
                 )
+
+    log.debug('Done logging LogEvents')
+
+
+def sendMetrics(data):
+    log.info('Logging SmartThings data to CloudWatch Metrics')
+    cw = boto3.client('cloudwatch', region_name=regionName)
+
+    timestamp = datetime.utcnow()
+
+    for sensorName in data:
+        log.debug('Putting Metrics for {}'.format(sensorName))
+        cw.put_metric_data(
+            Namespace=metricNamespace,
+            MetricData=[
+                {
+                    'MetricName': metricName,
+                    'Dimensions': [
+                        {
+                            'Name': 'SensorName',
+                            'Value': sensorName,
+                        },
+                    ],
+                    'Timestamp': timestamp,
+                    'Unit': 'None',
+                    'Value': metricData['value'],
+                } for metricName, metricData in data[sensorName].items()
+            ]
+        )
+
+    log.debug('Done logging Metrics')

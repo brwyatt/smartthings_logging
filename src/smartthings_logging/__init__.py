@@ -1,6 +1,8 @@
+from distutils.util import strtobool
 import logging
+import os
 
-from smartthings_logging.cloudwatch import sendLogs
+from smartthings_logging.cloudwatch import sendLogs, sendMetrics
 from smartthings_logging.smartthings import getData
 
 
@@ -38,4 +40,11 @@ def collect(device_types=None):
 
 
 def log_data(aggregate_data):
-    sendLogs(aggregate_data)
+    EnableLogs = bool(strtobool(os.environ.get('EnableCWLogs', 'True')))
+    EnableMetrics = bool(strtobool(os.environ.get('EnableCWMetrics', 'False')))
+
+    if EnableLogs:
+        sendLogs(aggregate_data)
+
+    if EnableMetrics:
+        sendMetrics(aggregate_data)
