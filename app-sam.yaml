@@ -111,7 +111,7 @@ Resources:
       Environment:
         Variables:
           EnableCWLogs: 'True'
-          EnableCWMetrics: 'False'
+          EnableCWMetrics: 'True'
           LOGLEVEL: INFO
           Region: !Sub ${AWS::Region}
           LogGroup: !Sub ${SmartThingsLogGroup}

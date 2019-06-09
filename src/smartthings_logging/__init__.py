@@ -41,7 +41,7 @@ def collect(device_types=None):
 
 def log_data(aggregate_data):
     EnableLogs = bool(strtobool(os.environ.get('EnableCWLogs', 'True')))
-    EnableMetrics = bool(strtobool(os.environ.get('EnableCWMetrics', 'False')))
+    EnableMetrics = bool(strtobool(os.environ.get('EnableCWMetrics', 'True')))
 
     if EnableLogs:
         sendLogs(aggregate_data)
