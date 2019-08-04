@@ -107,7 +107,7 @@ Resources:
       Handler: smartthings_logger.run
       CodeUri: lambda/smartthings_logger.py
       Role: !GetAtt SmartThingsLoggerRole.Arn
-      Timeout: 30
+      Timeout: 55
       Environment:
         Variables:
           EnableCWLogs: 'True'
