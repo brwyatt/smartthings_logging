@@ -30,11 +30,6 @@ Resources:
       RetentionPolicy: Delete
       CompatibleRuntimes:
         - python3.6
-  SmartThingsLogGroup:
-    Type: AWS::Logs::LogGroup
-    DeletionPolicy: Retain
-    Properties:
-      RetentionInDays: 731 # 2 Years
   SmartThingsLambdaLogGroup:
     # Basically want to set expiration of logs for the Lambda function
     Type: AWS::Logs::LogGroup
@@ -67,22 +62,6 @@ Resources:
                   - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*'
                   - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*'
                   - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*:*'
-        - PolicyName: 'SmartThings-LogAccess'
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: 'Allow'
-                Action:
-                  - 'logs:CreateLogStream'
-                  - 'logs:DescribeLogGroups'
-                  - 'logs:DescribeLogStreams'
-                  - 'logs:DescribeMetricFilters'
-                  - 'logs:PutLogEvents'
-                  - 'logs:PutMetricFilter'
-                Resource:
-                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SmartThingsLogGroup}'
-                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SmartThingsLogGroup}:*'
-                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SmartThingsLogGroup}:log-stream:*'
         - PolicyName: 'SmartThings-ConfigSecret'
           PolicyDocument:
             Version: '2012-10-17'
@@ -110,11 +89,10 @@ Resources:
       Timeout: 55
       Environment:
         Variables:
-          EnableCWLogs: 'True'
+          EnableCWLogs: 'False'
           EnableCWMetrics: 'True'
           LOGLEVEL: INFO
           Region: !Sub ${AWS::Region}
-          LogGroup: !Sub ${SmartThingsLogGroup}
           MetricNamespace: !Sub ${SmartThingsMetricNamespace}
           SmartThingsConfigSecretName: !Sub ${SmartThingsConfigSecretName}
       Events:
